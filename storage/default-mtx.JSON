@@ -1,0 +1,26 @@
+{
+    "sources": [
+        {
+            "name": "panel1",
+            "ip": "localhost",
+            "port": 9923
+        },
+        {
+            "name": "panel2",
+            "ip": "localhost",
+            "port": 9924
+        }
+    ],
+    "targets": [
+        {
+            "name": "sisyfos",
+            "ip": "localhost",
+            "port": 1176
+        },
+        {
+            "name": "amp",
+            "ip": "localhost",
+            "port": 3000
+        }
+    ]
+}
