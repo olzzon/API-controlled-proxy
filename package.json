@@ -19,8 +19,7 @@
   "dependencies": {
     "@types/http-proxy": "^1.17.4",
     "express": "^4.17.1",
-    "http": "^0.0.1-security",
-    "http-proxy": "^1.18.0"
+    "http": "^0.0.1-security"
   },
   "devDependencies": {
     "standard-version": "^8.0.0",

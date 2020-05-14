@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const server = require('http').Server(app)
-import { setAmp, setSisyfos } from './proxyHandler'
+import { setEmulator, setSisyfos } from './proxyHandler'
 
 export const expressInit = () => {
     console.log('REST Initialising WebServer')
@@ -18,10 +18,10 @@ export const expressInit = () => {
                 setSisyfos()
                 res.send('Sisyfos')
             })
-            .get('/amp', (req: any, res: any) => {
-                console.log('Amp')
-                setAmp()
-                res.send('Amp')
+            .get('/emulator', (req: any, res: any) => {
+                console.log('Emulator')
+                setEmulator()
+                res.send('Emulator')
             })
     })
 }
