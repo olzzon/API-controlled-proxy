@@ -2,7 +2,7 @@ const express = require('express')
 const path = require('path')
 const app = express()
 const server = require('http').Server(app)
-import { setEmulator, setSisyfos } from './proxyHandler'
+import { setEmulator, setMtx } from './proxyHandler'
 
 export const expressInit = () => {
     console.log('REST Initialising WebServer')
@@ -13,15 +13,9 @@ export const expressInit = () => {
             console.log(req.params)
             res.send('Access REST api by calling /state, queries: ?full  and ?path=the/tree/of/our/ember')
         })
-            .get('/sisyfos', (req: any, res: any) => {
-                console.log('Sisyfos')
-                setSisyfos()
-                res.send('Sisyfos')
-            })
-            .get('/emulator', (req: any, res: any) => {
-                console.log('Emulator')
-                setEmulator()
-                res.send('Emulator')
+            .get('/mtx', (req: any, res: any) => {
+                setMtx(req.query.source, req.query.target)
+                res.send('MTX switched')
             })
     })
 }

@@ -8,21 +8,19 @@ let targetSocket = new net.Socket()
 let targetConnected = false
 let clientList: any[] = []
 
+let mtx: any
+try {
+    mtx = JSON.parse(fs.readFileSync(path.resolve('storage', 'default-mtx.JSON')))
+} catch (error) {
+    console.log('Couldn´t read default-mtx.JSON file')
+}
+
 export const initProxy = () => {
     process.on('uncaughtException', (error) => {
         console.error('UncaughtExption setting up proxy :', error)
     })
 
     let sourcePort = 9923
-
-    let mtx: JSON
-    try {
-        mtx = JSON.parse(fs.readFileSync(path.resolve('storage', 'default-mtx.JSON')))
-    } catch (error) {
-        console.log('Couldn´t read default-mtx.JSON file')
-    }
-    console.log('Mtx :', mtx)
-
     const server = net.createServer((sourceSocket: any) => {
         clientList.push(sourceSocket)
         console.log('Clients connected', clientList.length)
@@ -40,13 +38,13 @@ export const initProxy = () => {
 
         sourceSocket.on('data', (data: any) => {
             if (targetConnected) {
-                console.log('Writing data to Target Socket :', data)
+                //console.log('Writing data to Target Socket :', data)
                 targetSocket.write(data)
             }
         })
 
         targetSocket.on('data', (data: any) => {
-            console.log('Writing data to Source Socket :', data)
+            //console.log('Writing data to Source Socket :', data)
             sourceSocket.write(data)
         })
 
@@ -60,24 +58,28 @@ export const initProxy = () => {
     console.log('Proxy listening to ', sourcePort, 'and sending out to ', targetPort)
 }
 
-export const setEmulator = () => {
-    clientList.forEach((clientSocket) => {
-        clientSocket.destroy()
+export const setMtx = (source: string, target: string) => {
+    let sourceIndex = 0
+    mtx.sources.forEach((item: any, index: number)=>{
+        if (item.name === source) {
+            sourceIndex = index
+        }
     })
-    targetSocket.destroy()
-    targetSocket = new net.Socket()
-    targetPort = 9925
-    targetHost = 'localhost'
-    targetConnected = true
-}
+    let targetIndex = 0
+    mtx.targets.forEach((item: any, index: number)=>{
+        if (item.name === target) {
+            targetIndex = index
+        }
+    })
 
-export const setSisyfos = () => {
+    console.log(mtx)
+    console.log('Source :', sourceIndex, 'Target :', targetIndex)
     clientList.forEach((clientSocket) => {
         clientSocket.destroy()
     })
     targetSocket.destroy()
     targetSocket = new net.Socket()
-    targetPort = 9924
-    targetHost = 'localhost'
+    targetPort = mtx.targets[targetIndex].port
+    targetHost = mtx.targets[targetIndex].ip
     targetConnected = true
 }

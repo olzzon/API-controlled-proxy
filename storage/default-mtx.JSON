@@ -7,20 +7,20 @@
         },
         {
             "name": "panel2",
-            "ip": "localhost",
-            "port": 9924
+            "ip": "192.168.0.99",
+            "port": 9923
         }
     ],
     "targets": [
         {
             "name": "sisyfos",
             "ip": "localhost",
-            "port": 1176
+            "port": 9924
         },
         {
-            "name": "amp",
+            "name": "emulator",
             "ip": "localhost",
-            "port": 3000
+            "port": 9925
         }
     ]
 }
