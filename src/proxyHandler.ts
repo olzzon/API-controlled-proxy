@@ -25,7 +25,7 @@ interface mtx {
 
 let sourceSockets: any[] = []
 let targetSockets: any[] = []
-let connectionList: number[] = []
+let sourceTargetList: number[] = []
 
 let mtx: mtx
 try {
@@ -44,27 +44,30 @@ export const initProxy = () => {
     const server = net.createServer((sourceSocket: any) => {
         sourceSockets.push(sourceSocket)
         console.log('Number of Clients connected', sourceSockets.length)
-        let targetIndex = 0
+        let targetIndex = -1
 
         mtx.sources.forEach((sourceItem: any, index: number) => {
             if (sourceSocket.remoteAddress.includes(sourceItem.ip)) {
-                targetIndex = connectionList[index]
+                targetIndex = sourceTargetList[index]
             }
         })
 
-        sourceSocket.on('data', (data: any) => {
-            //console.log('Writing data to Target Socket :', data)
-            if (targetSockets[targetIndex] != undefined) {
-                targetSockets[targetIndex].write(data)
-            }
-        })
 
-        targetSockets[targetIndex].on('data', (data: any) => {
-            //console.log('Writing data to Source Socket :', data)
-            if (sourceSocket != undefined) {
-                sourceSocket.write(data)
-            }
-        })
+
+        if (targetIndex >= 0) {
+            sourceSocket.on('data', (data: any) => {
+                //console.log('Writing data to Target Socket :', data)
+                if (targetSockets[targetIndex] != undefined) {
+                    targetSockets[targetIndex].write(data)
+                }
+            })
+            targetSockets[targetIndex].on('data', (data: any) => {
+                //console.log('Writing data to Source Socket :', data)
+                if (sourceSocket != undefined) {
+                    sourceSocket.write(data)
+                }
+            })
+        }
 
         sourceSocket.on('close', (had_error: any) => {
             console.log('Source connection has ended', sourceSocket.remoteAddress)
@@ -97,22 +100,30 @@ const connectTarget = (index: number, port: number, host: string) => {
 }
 
 export const setMtx = (source: string, target: string) => {
-    let sourceIndex = 0
-    mtx.sources.forEach((item: any, index: number) => {
-        if (item.name === source) {
-            sourceIndex = index
-        }
-    })
     let targetIndex = 0
     mtx.targets.forEach((item: any, index: number) => {
         if (item.name === target) {
             targetIndex = index
         }
     })
-    if (connectionList.length < sourceIndex + 1) {
-        connectionList.push(targetIndex)
-    } else {
-        connectionList[sourceIndex] = targetIndex
-    }
-    console.log('Connection List : ', connectionList )
+    let sourceIndex = 0
+    mtx.sources.forEach((item: any, index: number) => {
+        if (item.name === source) {
+            if (sourceTargetList.length < sourceIndex + 1) {
+                sourceTargetList.push(targetIndex)
+            } else {
+                sourceTargetList[sourceIndex] = targetIndex
+            }
+        }
+    })
+    sourceSockets = sourceSockets.filter((item) => {
+        if (item.remoteAddress.includes(mtx.sources[sourceIndex].ip)) {
+            item.end()
+            return false
+        } else {
+            return true
+        }
+    })
+
+    console.log('Connection List : ', sourceTargetList)
 }
