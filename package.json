@@ -17,6 +17,7 @@
     "license-validate": "node-license-validator -p -d --allow-licenses MIT MIT/X11 BSD BSD-3-Clause BSD-2-Clause ISC Apache Apache-2.0 WTFPL CC-BY-3.0 CC0-1.0 Unlicense --allow-packages cycle"
   },
   "dependencies": {
+    "@types/express": "^4.17.6",
     "@types/http-proxy": "^1.17.4",
     "express": "^4.17.1",
     "http": "^0.0.1-security"
