@@ -23,7 +23,7 @@
     "http": "^0.0.1-security"
   },
   "devDependencies": {
-    "standard-version": "^8.0.0",
+    "standard-version": "^8.0.1",
     "typescript": "^3.8.3"
   }
 }
